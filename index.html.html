@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>D — Think Deeper</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0b0c0e;
+      --surface:  #131417;
+      --border:   #242529;
+      --accent:   #e8c97a;
+      --accent2:  #c47f3a;
+      --text:     #e8e6e1;
+      --muted:    #6b6a66;
+      --glow:     rgba(232, 201, 122, 0.12);
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    /* Ambient background mesh */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 20% 20%, rgba(196,127,58,0.07) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 60% at 80% 80%, rgba(232,201,122,0.05) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Subtle grid texture */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 48px 48px;
+      opacity: 0.18;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .stage {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 52px;
+      width: min(680px, 92vw);
+      animation: fadeUp 0.9s cubic-bezier(0.22,1,0.36,1) both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Logo ── */
+    .logo-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+      animation: fadeUp 0.9s 0.1s cubic-bezier(0.22,1,0.36,1) both;
+    }
+
+    .logo {
+      width: 88px;
+      height: 88px;
+      border-radius: 22px;
+      background: linear-gradient(145deg, #1e1d19, #111210);
+      border: 1.5px solid #2e2c27;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      box-shadow:
+        0 0 0 1px rgba(232,201,122,0.06),
+        0 12px 40px rgba(0,0,0,0.5),
+        inset 0 1px 0 rgba(255,255,255,0.05);
+      transition: box-shadow 0.3s;
+    }
+
+    .logo:hover {
+      box-shadow:
+        0 0 0 1px rgba(232,201,122,0.18),
+        0 16px 50px rgba(0,0,0,0.6),
+        0 0 30px var(--glow),
+        inset 0 1px 0 rgba(255,255,255,0.06);
+    }
+
+    .logo-letter {
+      font-family: 'Playfair Display', serif;
+      font-size: 52px;
+      font-weight: 900;
+      line-height: 1;
+      background: linear-gradient(160deg, var(--accent) 30%, var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      user-select: none;
+    }
+
+    /* corner accent */
+    .logo::after {
+      content: '';
+      position: absolute;
+      bottom: -1px; right: -1px;
+      width: 18px; height: 18px;
+      border-radius: 0 0 21px 0;
+      background: linear-gradient(135deg, transparent 50%, rgba(232,201,122,0.25) 50%);
+    }
+
+    .tagline {
+      font-size: 13px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 400;
+    }
+
+    /* ── Greeting ── */
+    .greeting {
+      text-align: center;
+      animation: fadeUp 0.9s 0.2s cubic-bezier(0.22,1,0.36,1) both;
+    }
+
+    .greeting h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(26px, 5vw, 38px);
+      font-weight: 700;
+      line-height: 1.2;
+      color: var(--text);
+      margin-bottom: 10px;
+    }
+
+    .greeting h1 span {
+      background: linear-gradient(120deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .greeting p {
+      font-size: 15px;
+      color: var(--muted);
+      font-weight: 300;
+      line-height: 1.6;
+    }
+
+    /* ── Prompt bar ── */
+    .prompt-wrap {
+      width: 100%;
+      animation: fadeUp 0.9s 0.3s cubic-bezier(0.22,1,0.36,1) both;
+    }
+
+    .prompt-box {
+      position: relative;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 18px;
+      padding: 16px 64px 16px 20px;
+      transition: border-color 0.25s, box-shadow 0.25s;
+    }
+
+    .prompt-box:focus-within {
+      border-color: rgba(232,201,122,0.35);
+      box-shadow: 0 0 0 3px rgba(232,201,122,0.07), 0 8px 32px rgba(0,0,0,0.35);
+    }
+
+    .prompt-box textarea {
+      width: 100%;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 400;
+      line-height: 1.6;
+      resize: none;
+      min-height: 26px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .prompt-box textarea::placeholder {
+      color: var(--muted);
+    }
+
+    /* scrollbar */
+    .prompt-box textarea::-webkit-scrollbar { width: 4px; }
+    .prompt-box textarea::-webkit-scrollbar-track { background: transparent; }
+    .prompt-box textarea::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    .send-btn {
+      position: absolute;
+      right: 14px;
+      bottom: 14px;
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+      opacity: 0.3;
+    }
+
+    .send-btn.active {
+      opacity: 1;
+      box-shadow: 0 4px 16px rgba(196,127,58,0.35);
+    }
+
+    .send-btn:hover.active { transform: scale(1.07); }
+    .send-btn:active.active { transform: scale(0.95); }
+
+    .send-btn svg {
+      width: 17px; height: 17px;
+      fill: #0b0c0e;
+    }
+
+    /* ── Pills ── */
+    .pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      animation: fadeUp 0.9s 0.4s cubic-bezier(0.22,1,0.36,1) both;
+    }
+
+    .pill {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 7px 14px;
+      font-size: 12.5px;
+      color: var(--muted);
+      cursor: pointer;
+      transition: color 0.2s, border-color 0.2s, background 0.2s;
+      white-space: nowrap;
+    }
+
+    .pill:hover {
+      color: var(--accent);
+      border-color: rgba(232,201,122,0.3);
+      background: rgba(232,201,122,0.04);
+    }
+
+    /* ── Footer ── */
+    .footer {
+      position: fixed;
+      bottom: 24px;
+      font-size: 11.5px;
+      color: #3a3935;
+      letter-spacing: 0.05em;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="stage">
+
+    <div class="logo-wrap">
+      <div class="logo">
+        <span class="logo-letter">D</span>
+      </div>
+      <span class="tagline">Think Deeper</span>
+    </div>
+
+    <div class="greeting">
+      <h1>What's on your <span>mind</span>?</h1>
+      <p>Ask anything. I'm here to think with you.</p>
+    </div>
+
+    <div class="prompt-wrap">
+      <div class="prompt-box">
+        <textarea id="input" rows="1" placeholder="Message D…"></textarea>
+        <button class="send-btn" id="sendBtn" title="Send">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="pills">
+      <span class="pill" onclick="fillPrompt(this)">✦ Explain a concept</span>
+      <span class="pill" onclick="fillPrompt(this)">✦ Write something</span>
+      <span class="pill" onclick="fillPrompt(this)">✦ Help me brainstorm</span>
+      <span class="pill" onclick="fillPrompt(this)">✦ Analyse data</span>
+      <span class="pill" onclick="fillPrompt(this)">✦ Solve a problem</span>
+    </div>
+
+  </div>
+
+  <div class="footer">D · v1.0 · Always thinking</div>
+
+  <script>
+    const ta = document.getElementById('input');
+    const btn = document.getElementById('sendBtn');
+
+    // auto-resize
+    ta.addEventListener('input', () => {
+      ta.style.height = 'auto';
+      ta.style.height = ta.scrollHeight + 'px';
+      btn.classList.toggle('active', ta.value.trim().length > 0);
+    });
+
+    // send on Enter (Shift+Enter = newline)
+    ta.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        if (ta.value.trim()) send();
+      }
+    });
+
+    btn.addEventListener('click', () => { if (ta.value.trim()) send(); });
+
+    async function send() {
+      const msg = ta.value.trim();
+      if (!msg) return;
+
+      ta.value = '';
+      ta.style.height = 'auto';
+      btn.classList.remove('active');
+      ta.disabled = true;
+      btn.disabled = true;
+      ta.placeholder = '…thinking';
+
+      // ⚠️ Flask must have CORS enabled — see instructions below
+      try {
+        const res = await fetch('http://localhost:5000/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: msg })
+        });
+
+        if (!res.ok) throw new Error(`Server error: ${res.status}`);
+
+        const data = await res.json();
+        showReply(msg, data.reply);
+      } catch (err) {
+        showReply(msg, '⚠️ Could not reach the backend. Is Flask running on port 5000?');
+        console.error(err);
+      } finally {
+        ta.disabled = false;
+        btn.disabled = false;
+        ta.placeholder = 'Message D…';
+        ta.focus();
+      }
+    }
+
+    function showReply(userMsg, replyText) {
+      // Build chat bubble if not already present
+      let chatArea = document.getElementById('chatArea');
+      if (!chatArea) {
+        chatArea = document.createElement('div');
+        chatArea.id = 'chatArea';
+        chatArea.style.cssText = `
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          gap: 14px;
+          max-height: 320px;
+          overflow-y: auto;
+          padding-right: 4px;
+          animation: fadeUp 0.4s ease both;
+        `;
+        document.querySelector('.stage').insertBefore(chatArea, document.querySelector('.prompt-wrap'));
+        // Hide greeting once chat starts
+        document.querySelector('.greeting').style.display = 'none';
+        document.querySelector('.pills').style.display = 'none';
+      }
+
+      chatArea.innerHTML += `
+        <div style="display:flex;justify-content:flex-end">
+          <div style="background:#1e1d19;border:1px solid #2e2c27;border-radius:14px 14px 4px 14px;padding:10px 14px;max-width:80%;font-size:14px;color:#e8e6e1;line-height:1.6">${escHtml(userMsg)}</div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start">
+          <div style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#e8c97a,#c47f3a);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Playfair Display',serif;font-size:15px;font-weight:900;color:#0b0c0e">D</div>
+          <div style="background:#131417;border:1px solid #242529;border-radius:14px 14px 14px 4px;padding:10px 14px;max-width:80%;font-size:14px;color:#e8e6e1;line-height:1.6">${escHtml(replyText)}</div>
+        </div>
+      `;
+      chatArea.scrollTop = chatArea.scrollHeight;
+    }
+
+    function escHtml(str) {
+      return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+    }
+
+    function fillPrompt(el) {
+      const map = {
+        '✦ Explain a concept': 'Explain ',
+        '✦ Write something': 'Write a ',
+        '✦ Help me brainstorm': 'Help me brainstorm ideas for ',
+        '✦ Analyse data': 'Analyse this data: ',
+        '✦ Solve a problem': 'Help me solve: ',
+      };
+      ta.value = map[el.textContent] || '';
+      ta.focus();
+      ta.style.height = 'auto';
+      ta.style.height = ta.scrollHeight + 'px';
+      btn.classList.toggle('active', ta.value.trim().length > 0);
+    }
+  </script>
+</body>
+</html>
