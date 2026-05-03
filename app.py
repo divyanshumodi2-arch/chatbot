@@ -1,17 +1,16 @@
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 from groq import Groq
 import os
 
 app = Flask(__name__)
 CORS(app)
-client = Groq(api_key="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")
-
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # ← fixed
+client = Groq(api_key=os.environ.get("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"))
 
 @app.route("/")
 def index():
-    return send_from_directory(BASE_DIR, "dm_chat_2.html")  # ← fixed
+    with open("dm_chat_2.html", "r") as f:
+        return f.read()
 
 @app.route("/chat", methods=["POST"])
 def chat():
